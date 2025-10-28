@@ -11,7 +11,7 @@ function MobileSideBar({ isOpen ,onClose}) {
             animate={{ opacity: 1 }}
             exit={{opacity:0}}
             transition={{ duration: 0.3 }}
-            className=" absolute inset-0 bg-[#00000040] z-40"
+            className=" absolute inset-0 bg-[#00000040] z-40 backdrop-blur-sm"
             onClick={onClose}
           />
           <motion.div
