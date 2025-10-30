@@ -24,7 +24,7 @@ function Modal({ isOpen, onClose, size = "form", children }) {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.8, opacity: 0 }}
               transition={{ duration: 0.3 }}
-              className={`fixed z-50 ${sizes[size]}   bg-white p-6 rounded-xl shadow-lg top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2`}
+              className={`fixed z-50 ${sizes[size]}   bg-white p-10 rounded-xl shadow-lg top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2`}
             >
               {children}
             </motion.div>

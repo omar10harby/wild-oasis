@@ -1,0 +1,22 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { createEditCabin as createEditCabinApi } from '../../services/apiCabins'
+import toast from 'react-hot-toast'
+
+function useEditCabin() {
+  const query = useQueryClient();
+
+  const { mutate: EditCabin, isPending: isEditing } = useMutation({
+    mutationFn: ({ newCabinData, id }) => createEditCabinApi( newCabinData,id),
+    onSuccess: () => {
+      toast.success("Cabin successfully updated");
+      query.invalidateQueries({ queryKey: ['cabins'] });
+    },
+    onError: (err) => {
+      toast.error(err.message);
+    },
+  });
+
+  return { EditCabin, isEditing };
+}
+
+export default useEditCabin;
