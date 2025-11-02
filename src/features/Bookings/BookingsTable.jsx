@@ -4,6 +4,7 @@ import { useBookings } from "./useBookings";
 import BookingRow from "./BookingRow";
 import Pagination from "../../ui/Pagination";
 import { PAGE_SIZE } from "../../utils/constants";
+import BookingCard from "./BookingCard";
 
 function BookingsTable() {
   const { bookings, isLoading, count } = useBookings();
@@ -42,6 +43,10 @@ function BookingsTable() {
           </tbody>
         </table>
         <Pagination count={count} />
+      </div>
+      <div className="md:hidden flex flex-col gap-4">
+            {bookings.map((booking)=><BookingCard booking={booking}/>)}
+            <Pagination count={count}/>
       </div>
     </div>
   );

@@ -5,8 +5,10 @@ import { HiOutlineDotsVertical, HiOutlineTrash } from "react-icons/hi";
 import { IoEye } from "react-icons/io5";
 import { HiMiniArrowDownOnSquare } from "react-icons/hi2";
 import DropMenu from "../../ui/DropMenu";
+import { useNavigate } from "react-router-dom";
 function BookingRow({ booking }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate=useNavigate()
   const statusColors = {
     unconfirmed: "bg-[#e0f2fe] text-[#0369a1]",
     "checked-in": "bg-[#dcfce7] text-[#15803d]",
@@ -72,16 +74,17 @@ function BookingRow({ booking }) {
           </button>
           <DropMenu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)}>
             <button
-              className="w-full flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-all"
+              className="w-full flex items-center  gap-3 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-all"
               onClick={() => {
                 setIsMenuOpen(false);
+                navigate(`/bookings/${booking.id}`)
               }}
             >
               <IoEye size={20} className="text-gray-500" />
-              <span>Edit</span>
+              <span>See details</span>
             </button>
 
-            <button className="w-full flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-all">
+            <button className="w-full flex items-center gap-3 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-all">
               <HiMiniArrowDownOnSquare size={25} className="text-gray-500" />
               <span>Duplicate</span>
             </button>
@@ -90,7 +93,7 @@ function BookingRow({ booking }) {
               onClick={() => {
                 setIsMenuOpen(false);
               }}
-              className="w-full flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-all"
+              className="w-full flex items-center gap-3 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-all"
             >
               <HiOutlineTrash size={25} className="text-gray-500" />
               <span>Delete</span>
