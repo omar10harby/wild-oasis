@@ -1,9 +1,9 @@
-import React from "react";
 import { useForm } from "react-hook-form";
 import FormError from "./FormError";
-import useSignUp from "./useSignUp";
+import { useUpdateUser } from "./useUpdateUser";
 
-function SignUpForm() {
+function UpdatePasswordFrom() {
+  const { updateUser, isUpdating } = useUpdateUser();
   const {
     register,
     handleSubmit,
@@ -12,19 +12,14 @@ function SignUpForm() {
     watch,
   } = useForm({
     defaultValues: {
-      fullName: "",
-      email: "",
       password: "",
       confirmPassword: "",
     },
   });
-
-  const { signUp, isSigningUp } = useSignUp();
-  const password = watch("password");
-
-  function onSubmit({ fullName, email, password }) {
-    signUp(
-      { fullName, email, password },
+  const password=watch("password")
+  function onSubmit({ password }) {
+    updateUser(
+      { password },
       {
         onSettled: () => {
           reset();
@@ -32,52 +27,11 @@ function SignUpForm() {
       }
     );
   }
-
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
       className="flex flex-col gap-5 p-6 rounded-lg mx-auto"
     >
-      {/* Full Name */}
-      <div className="flex flex-col gap-2">
-        <label htmlFor="fullName" className="font-medium">
-          Full name
-        </label>
-        <input
-          type="text"
-          id="fullName"
-          className="border border-gray-300 rounded-md px-3 py-2 outline-none focus:border-indigo-600 transition"
-          {...register("fullName", {
-            required: "Full name is required",
-            minLength: {
-              value: 3,
-              message: "Full name must be at least 3 characters",
-            },
-          })}
-        />
-        <FormError error={errors.fullName?.message} />
-      </div>
-
-      {/* Email */}
-      <div className="flex flex-col gap-2">
-        <label htmlFor="email" className="font-medium">
-          Email address
-        </label>
-        <input
-          type="text"
-          id="email"
-          className="border border-gray-300 rounded-md px-3 py-2 outline-none focus:border-indigo-600 transition"
-          {...register("email", {
-            required: "Email is required",
-            pattern: {
-              value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-              message: "Please enter a valid email",
-            },
-          })}
-        />
-        <FormError error={errors.email?.message} />
-      </div>
-
       {/* Password */}
       <div className="flex flex-col gap-2">
         <label htmlFor="password" className="font-medium">
@@ -117,22 +71,15 @@ function SignUpForm() {
 
       {/* Submit */}
       <div className="flex justify-end gap-3">
-        <button 
-        type="reset"
-        className="bg-gray-100 font-semibold px-6 py-3 rounded-md w-fit  transition duration-150 hover:bg-gray-200 border border-gray-300 "
-        onClick={reset}
-        >
-          Cancel
-        </button>
         <button
-          disabled={isSigningUp}
+          disabled={isUpdating}
           className="bg-indigo-600 text-white font-semibold px-6 py-3 rounded-md w-fit  disabled:opacity-50 transition active:scale-95"
         >
-          {isSigningUp ? "Creating account..." : "Sign up"}
+          {isUpdating ? "updating...." : "Update user"}
         </button>
       </div>
     </form>
   );
 }
 
-export default SignUpForm;
+export default UpdatePasswordFrom;

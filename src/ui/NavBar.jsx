@@ -29,11 +29,11 @@ function NavBar({ onBarClick }) {
           <p>{user?.user_metadata.fullName}</p>
           <ul className="flex items-center gap-3">
             <li>
-              <NavLink>
+              <NavLink to={'/account'}>
                 <CiUser size={25} />
               </NavLink>
             </li>
-            {user && <li>
+            {user?.user_metadata.avatar && <li>
                 <IoLogOutOutline size={25} className=" cursor-pointer" onClick={()=>logout()}/>
               </li>}
             <li className="md:hidden">

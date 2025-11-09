@@ -14,7 +14,7 @@ function useLogin() {
             navigate('/')
         },
         onError:(err)=>{
-            toast.error(err)
+            toast.error(err.message)
         }
     })
     return {login,isLogin}

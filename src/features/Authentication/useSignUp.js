@@ -13,9 +13,9 @@ function useSignUp() {
       );
     },
     onError: (err) => {
-      console.error("⚠️ Signup failed:", err);
+      console.error("⚠️ Signup failed:", err.message);
 
-      toast.error(err);
+      toast.error(err.message);
     },
   });
 return {signUp,isSigningUp}

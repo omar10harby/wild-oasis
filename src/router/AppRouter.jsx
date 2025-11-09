@@ -8,6 +8,7 @@ import Settings from "../pages/Settings";
 import Booking from "../pages/Booking";
 import CheckIn from "../pages/CheckIn";
 import Login from "../pages/Login";
+import Account from "../pages/Account";
 import ProtectedRoute from "./ProtectedRoute";
 const routes = createBrowserRouter([
   {
@@ -40,6 +41,10 @@ const routes = createBrowserRouter([
       {
         path: "users",
         element: <Users />,
+      },
+      {
+        path: "account",
+        element: <Account />,
       },
       {
         path: "settings",
