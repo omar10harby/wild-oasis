@@ -1,7 +1,7 @@
 
 
 import { useState, useRef, useEffect } from "react";
-import { countries, getFlagUrl } from "../data/countries";
+import { countries, getFlagUrl } from "../data/Countries";
 import { useOutSideClick } from "../hooks/useOutSideClick";
 
 function CountrySelectSearchable({ value, onChange, error, disabled }) {
