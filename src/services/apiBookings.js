@@ -15,7 +15,7 @@ export async function getBookings({ filter, sortBy, page }) {
     query = query.order(sortBy.field, {
       ascending: sortBy.direction === "asc",
     });
-    
+
   if (page) {
     const from = (page - 1) * PAGE_SIZE;
     const to = from + PAGE_SIZE - 1;
@@ -80,24 +80,28 @@ export async function getStaysAfterDate(date) {
 }
 
 // Activity means that there is a check in or a check out today
+import { isToday } from "date-fns"; // مهم جدًا
+
 export async function getStaysTodayActivity() {
   const { data, error } = await supabase
     .from("bookings")
     .select("*, guests(fullName, nationality, countryFlag)")
-    .or(
-      `and(status.eq.unconfirmed,startDate.eq.${getToday()}),and(status.eq.checked-in,endDate.eq.${getToday()})`
-    )
+    .in("status", ["unconfirmed", "checked-in"])
     .order("created_at");
-
-  // Equivalent to this. But by querying this, we only download the data we actually need, otherwise we would need ALL bookings ever created
-  // (stay.status === 'unconfirmed' && isToday(new Date(stay.startDate))) ||
-  // (stay.status === 'checked-in' && isToday(new Date(stay.endDate)))
 
   if (error) {
     console.error(error);
     throw new Error("Bookings could not get loaded");
   }
-  return data;
+
+  // فلترة في الكود نفسه بدل SQL
+  const todayActivities = data.filter(
+    (stay) =>
+      (stay.status === "unconfirmed" && isToday(new Date(stay.startDate))) ||
+      (stay.status === "checked-in" && isToday(new Date(stay.endDate)))
+  );
+
+  return todayActivities;
 }
 
 export async function updateBooking(id, obj) {
@@ -123,5 +127,149 @@ export async function deleteBooking(id) {
     console.error(error);
     throw new Error("Booking could not be deleted");
   }
+  return data;
+}
+
+// Get bookings for a specific cabin
+// export async function getCabinBookings(cabinId) {
+//   const { data, error } = await supabase
+//     .from("bookings")
+//     .select("startDate, endDate, status")
+//     .eq("cabinId", cabinId)
+//     .in("status", ["unconfirmed", "checked-in"]) // فقط الحجوزات النشطة
+//     .order("startDate");
+
+//   if (error) {
+//     console.error(error);
+//     throw new Error("Cabin bookings could not be loaded");
+//   }
+
+//   return data;
+// }
+
+// // Check if cabin is available for date range
+// export async function checkCabinAvailability(cabinId, startDate, endDate) {
+//   const { data, error } = await supabase
+//     .from("bookings")
+//     .select("id, startDate, endDate")
+//     .eq("cabinId", cabinId)
+//     .in("status", ["unconfirmed", "checked-in"])
+//     .or(`and(startDate.lte.${endDate},endDate.gte.${startDate})`);
+
+//   if (error) {
+//     console.error(error);
+//     throw new Error("Could not check availability");
+//   }
+
+//   // إذا في bookings متداخلة = الكابينة مش متاحة
+//   return data.length === 0;
+// }
+
+export async function getAvailableCabins(startDate, endDate, numGuests) {
+  const { data: allCabins, error: cabinsError } = await supabase
+    .from("cabins")
+    .select("*")
+    .gte("maxCapacity", numGuests)
+    .order("regularPrice");
+  if (cabinsError) {
+    console.log(cabinsError);
+    throw new Error("could not load cabins");
+  }
+  const { data: conflictingBookings, error: bookingsError } = await supabase
+    .from("bookings")
+    .select("cabinId,startDate,endDate")
+    .in("status", ["unconfirmed", "checked-in"])
+    .lte("startDate", endDate)
+    .gte("endDate", startDate);
+
+  if (bookingsError) {
+    console.log(bookingsError);
+    throw new Error("could not load bookings");
+  }
+  const bookedCabinsIds = conflictingBookings.map((b) => b.cabinId);
+  const availableCabins = allCabins.filter(
+    (cabin) => !bookedCabinsIds.includes(cabin.id)
+  );
+  return {
+    availableCabins,
+    allCabins,
+    bookedCabinsIds,
+  };
+}
+
+export async function getNextAvailableDates(numGuests) {
+  const today = new Date().toISOString().split("T")[0];
+  const { data: cabins, error: cabinsError } = await supabase
+    .from("cabins")
+    .select("*")
+    .gte("maxCapacity", numGuests);
+
+  if (cabinsError) {
+    console.log(cabinsError);
+    throw new Error("could not load cabins");
+  }
+
+  const { data: bookings, error: bookingsError } = await supabase
+    .from("bookings")
+    .select("cabinId, startDate, endDate")
+    .in("status", ["unconfirmed", "checked-in"])
+    .gte("endDate", today)
+    .order("startDate");
+
+  if (bookingsError) {
+    console.error(bookingsError);
+    throw new Error("Could not load bookings");
+  }
+
+  const cabinsWithAvailability = cabins.map((cabin) => {
+    const cabinBookings = bookings
+      .filter((b) => b.cabinId === cabin.id)
+      .sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
+
+    let nextAvailable = today;
+    if (cabinBookings.length === 0) {
+      return { ...cabin, nextAvailableDate: today, isAvailableNow: true };
+    }
+
+    for (let i = 0; i < cabinBookings.length; i++) {
+      const booking = cabinBookings[i];
+      const bookingStart = new Date(booking.startDate);
+      const bookingEnd = new Date(booking.endDate);
+      const currentDate = nextAvailable;
+
+      if (currentDate < bookingStart) {
+        return {
+          ...cabin,
+          nextAvailableDate: nextAvailable,
+          isAvailableNow: nextAvailable === today,
+        };
+      }
+      const dayAfterBooking = new Date(bookingEnd);
+      dayAfterBooking.setDate(dayAfterBooking.getDate() + 1);
+      nextAvailable = dayAfterBooking.toISOString().split("T")[0];
+    }
+
+    return {
+      ...cabin,
+      nextAvailableDate: nextAvailable,
+      isAvailableNow: false,
+    };
+  });
+
+  return cabinsWithAvailability;
+}
+
+export async function createBooking(newBooking) {
+  const { data, error } = await supabase
+    .from("bookings")
+    .insert([newBooking])
+    .select()
+    .single();
+
+  if (error) {
+    console.error(error);
+    throw new Error("Booking could not be created");
+  }
+
   return data;
 }

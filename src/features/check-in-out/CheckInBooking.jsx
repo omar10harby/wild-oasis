@@ -88,7 +88,7 @@ if (isLoading || !settings) return <Spinner/>;
               setIsPaid((prev) => !prev);
               setAddBreakfast((prev) => !prev);
             }}
-            className="w-12 h-5 bg-blue-500"
+            className="w-12 h-5"
           />
           <label htmlFor="breakfast">
             Want to add breakfast for {formatCurrency(optionalBreakfastPrice)}?

@@ -8,6 +8,7 @@ import {
 } from "react-icons/io5";
 import { MdOutlineOtherHouses } from "react-icons/md";
 import { HiOutlineUsers } from "react-icons/hi";
+import Uploader from "../data/Uploader";
 function SideBar() {
   return (
     <div className="hidden w-60 md:flex flex-col  gap-10 py-8 px-6 h-full border-r border-gray-100">

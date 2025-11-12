@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { isFuture, isPast, isToday } from "date-fns";
 import supabase from "../services/supabase";
-import Button from "../ui/Button";
 import { subtractDates } from "../utils/helpers";
 
 import { bookings } from "./data-bookings";
@@ -142,13 +141,13 @@ function Uploader() {
     >
       <h3>SAMPLE DATA</h3>
 
-      <Button onClick={uploadAll} disabled={isLoading}>
+      <button onClick={uploadAll} disabled={isLoading}>
         Upload ALL
-      </Button>
+      </button>
 
-      <Button onClick={uploadBookings} disabled={isLoading}>
+      <button onClick={uploadBookings} disabled={isLoading}>
         Upload bookings ONLY
-      </Button>
+      </button>
     </div>
   );
 }

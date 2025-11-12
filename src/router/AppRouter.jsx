@@ -10,6 +10,7 @@ import CheckIn from "../pages/CheckIn";
 import Login from "../pages/Login";
 import Account from "../pages/Account";
 import ProtectedRoute from "./ProtectedRoute";
+import CreateBooking from "../pages/CreateBooking";
 const routes = createBrowserRouter([
   {
     element: (
@@ -34,6 +35,11 @@ const routes = createBrowserRouter([
         path: "bookings/:bookingId",
         element: <Booking />,
       },
+      {
+        path:"bookings/createBooking",
+        element:<CreateBooking/>
+      }
+      ,
       {
         path: "cabins",
         element: <Cabins />,
