@@ -31,6 +31,7 @@ function MobileSideBar({ isOpen, onClose }) {
                     className={
                       " text-base font-semibold flex items-center gap-2 px-6 py-3 hover:bg-gray-200 transition-all duration-200   rounded-md"
                     }
+                     onClick={onClose}
                   >
                     <IoHomeOutline size={20} />
                     DashBoard
@@ -54,6 +55,7 @@ function MobileSideBar({ isOpen, onClose }) {
                     className={
                       "font-semibold flex items-center gap-2 pl-5 pr-6 py-3 hover:bg-gray-200 transition-all duration-200  rounded-md"
                     }
+                     onClick={onClose}
                   >
                     <MdOutlineOtherHouses size={20} />
                     Cabins
@@ -65,6 +67,7 @@ function MobileSideBar({ isOpen, onClose }) {
                     className={
                       "font-semibold flex items-center gap-2 pl-5 pr-6 py-3 hover:bg-gray-200 transition-all duration-200 rounded-md"
                     }
+                     onClick={onClose}
                   >
                     <HiOutlineUsers size={20} />
                     Users
@@ -76,6 +79,7 @@ function MobileSideBar({ isOpen, onClose }) {
                     className={
                       "font-semibold flex items-center gap-2 pl-5 pr-6 py-3 hover:bg-gray-200 transition-all duration-200  rounded-md"
                     }
+                     onClick={onClose}
                   >
                     <IoSettingsOutline size={20} />
                     Settings

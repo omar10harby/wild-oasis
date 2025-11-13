@@ -77,7 +77,7 @@ export const countries = [
 
 // Helper function to get flag URL
 export const getFlagUrl = (countryCode) => {
-  return `https://flagcdn.com/48x36/${countryCode.toLowerCase()}.png`;
+  return `https://flagcdn.com/48x36/${countryCode.toLowerCase()}.svg`;
 };
 
 // Helper function to get country by code
